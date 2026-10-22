@@ -1,5 +1,6 @@
 const express = require("express");
 
+const requireAuth = require("../middlewares/requireAuth.js");
 const { 
     postArticle, 
     getAllArticles, 
@@ -10,11 +11,11 @@ const {
 
 const router = express.Router();
 
-router.post ("/articles",postArticle);
+router.post ("/articles", requireAuth, postArticle);
 
-router.get ("/articles",getAllArticles);
+router.get ("/articles", requireAuth, getAllArticles);
 
-router.get ("/articles/:id", getAllArticleById);
+router.get ("/articles/:id", requireAuth, getAllArticleById);
 
 router.put ("/articles/:id", updateArticleById);
 

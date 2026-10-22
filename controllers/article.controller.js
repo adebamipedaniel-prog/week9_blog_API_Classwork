@@ -3,22 +3,13 @@ const joi = require("joi");
 const ArticleModel = require("../models/article.model");
 
 const postArticle = async (req, res, next) => {
-  const articleSchema = joi.object({
-    title: joi.string().min(5).required(),
-    content: joi.string().min(20).required(),
-    author: joi.string().optional().default("Guest")
-  });
+  try {
+    const newArticle = new ArticleModel({
+      title: req.body.title,
+      content: req.body.content,
+      author: req.user.user.id, // Use the userId from the authenticated user
+    });
 
-  const { error, value } = articleSchema.validate(req.body);
-
-  if (error) {
-  return res.status(400).json({ message: error.details[0].message });
-}
-    
-    try {
-
-      const newArticle = new ArticleModel(value);
-   
     await newArticle.save();
 
     return res.status(200).json({
@@ -32,16 +23,9 @@ const postArticle = async (req, res, next) => {
 };
 
 const getAllArticles = async (req, res, next) => {
-  const { page = 1, limit =10 } = req.query;
-  
-  const skip = (page - 1) * limit;
-
   try {
-    const articles = await ArticleModel.find({})
-    .sort ({ createdAt: -1 })
-    .skip(skip)
-    .limit(parseInt(limit));
-
+    console.log(req.user); // Log the user object to verify it's available
+    const articles = await ArticleModel.find();
     return res.status(200).json({
       message: "Articles fetched successfully",
       data: articles,

@@ -9,7 +9,8 @@ const connectDB = require("./database/connectDB.js");
 const errorHandler = require("./middlewares/errorHandler.js");
 const requestLogger = require("./middlewares/logger.js");   // renamed to requestLogger (lowercase)
 
-const articleRoutes = require('./routes/article.routes');
+const ArticleRoutes = require('./routes/article.route.js');
+const UserRoutes = require('./routes/user.route.js');
 
 const app = express();
 const PORT = process.env.PORT || 3010;
@@ -18,13 +19,12 @@ connectDB();
 
 app.use(express.json());
 
-// ✅ Use cors() without quotes – or with proper config
-app.use(cors());   // or app.use(cors({ origin: '*' }))
+app.use(cors('*'));
 
 app.use(requestLogger);
 
-// ✅ Mount at /api instead of /api/v1
-app.use("/api", articleRoutes);
+app.use("/api", ArticleRoutes);
+app.use("/api/users", UserRoutes);
 
 app.use(errorHandler);
 
